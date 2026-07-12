@@ -1,233 +1,624 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Тест по предметам</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    .subject, .variant, .question {
-      padding: 15px;
-      margin: 10px auto;
-      width: 80%;
-      background-color: #f0f0f0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .hidden { display: none; }
-    button {
-      padding: 10px 20px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 5px;
-      background-color: #ddd;
-      cursor: pointer;
-      width: 60%;
-    }
-    button:hover {
-      background-color: #ccc;
-    }
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #999;
-      padding: 8px 12px;
-    }
-  </style>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- Добавлено -->
-  
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Айдана тәттілер әлемі</title>
+    <!-- Font Awesome (белгішелер) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* -------------------- Негізгі стильдер -------------------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #fff8f5;
+            color: #4a2c2a;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* -------------------- Хедер -------------------- */
+        header {
+            background: linear-gradient(135deg, #fce4dc, #f8d5c4);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #6b3e36;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: #d4886a;
+            margin-right: 8px;
+        }
+
+        .logo span {
+            color: #b5654b;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            font-weight: 500;
+        }
+
+        nav a {
+            transition: color 0.3s;
+            font-size: 18px;
+        }
+
+        nav a:hover {
+            color: #b5654b;
+        }
+
+        .nav-toggle {
+            display: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b3e36;
+        }
+
+        /* -------------------- Батыр (Hero) -------------------- */
+        .hero {
+            background: linear-gradient(120deg, #fce4dc 0%, #fdf0ea 100%);
+            padding: 60px 0 70px;
+            border-radius: 0 0 40px 40px;
+        }
+
+        .hero .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .hero-text {
+            flex: 1 1 400px;
+        }
+
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 800;
+            color: #4a2c2a;
+            line-height: 1.2;
+        }
+
+        .hero-text h1 span {
+            color: #b5654b;
+            background: #fce1d0;
+            padding: 0 12px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .hero-text p {
+            font-size: 20px;
+            margin: 20px 0 30px;
+            color: #6b4c44;
+            max-width: 500px;
+        }
+
+        .btn-primary {
+            background: #b5654b;
+            color: #fff;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(181, 101, 75, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #9e4f38;
+            transform: scale(1.02);
+        }
+
+        .hero-image {
+            flex: 1 1 400px;
+            text-align: center;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transition: transform 0.4s;
+        }
+
+        .hero-image img:hover {
+            transform: scale(1.02);
+        }
+
+        /* -------------------- Біздің тәттілер -------------------- */
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin: 60px 0 30px;
+            color: #4a2c2a;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #d4886a;
+            margin: 10px auto 0;
+            border-radius: 4px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 40px 0 60px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .product-card h3 {
+            font-size: 22px;
+            margin: 15px 0 8px;
+            color: #3f2825;
+        }
+
+        .product-card p {
+            color: #7a5a52;
+            font-weight: 500;
+            font-size: 18px;
+        }
+
+        .product-card .price {
+            color: #b5654b;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        /* -------------------- Арнайы ұсыныс (лоялдық QR) -------------------- */
+        .loyalty-section {
+            background: linear-gradient(135deg, #f8e3db, #fce8e0);
+            border-radius: 40px;
+            padding: 50px 30px;
+            margin: 40px 0 60px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+            gap: 30px;
+            box-shadow: 0 8px 30px rgba(181, 101, 75, 0.15);
+        }
+
+        .loyalty-text {
+            flex: 1 1 300px;
+        }
+
+        .loyalty-text h2 {
+            font-size: 32px;
+            color: #4a2c2a;
+        }
+
+        .loyalty-text h2 i {
+            color: #d4886a;
+            margin-right: 10px;
+        }
+
+        .loyalty-text p {
+            font-size: 18px;
+            color: #5a3f3a;
+            margin: 15px 0 20px;
+        }
+
+        .loyalty-qr {
+            background: #fff;
+            padding: 25px 30px;
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            flex: 0 0 220px;
+        }
+
+        .loyalty-qr #profileQr {
+            margin: 10px auto;
+            min-height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loyalty-qr button {
+            background: #b5654b;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .loyalty-qr button:hover {
+            background: #9e4f38;
+        }
+
+        /* -------------------- Төменгі деректер -------------------- */
+        footer {
+            background: #3f2825;
+            color: #f0ddd6;
+            padding: 40px 0 20px;
+            border-radius: 40px 40px 0 0;
+            margin-top: 40px;
+        }
+
+        footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        footer h3 {
+            color: #fce4dc;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        footer ul {
+            list-style: none;
+        }
+
+        footer ul li {
+            margin: 10px 0;
+        }
+
+        footer ul li i {
+            margin-right: 8px;
+            color: #d4886a;
+        }
+
+        footer .social a {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 24px;
+            color: #f0ddd6;
+            transition: color 0.3s;
+        }
+
+        footer .social a:hover {
+            color: #d4886a;
+        }
+
+        footer .copyright {
+            text-align: center;
+            width: 100%;
+            margin-top: 30px;
+            font-size: 15px;
+            border-top: 1px solid #5a3f3a;
+            padding-top: 20px;
+            color: #bfa49a;
+        }
+
+        /* -------------------- Адаптивтілік -------------------- */
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                gap: 15px;
+                padding: 20px 0;
+                text-align: center;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            .hero-text h1 {
+                font-size: 34px;
+            }
+
+            .hero-text p {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .loyalty-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .loyalty-qr {
+                flex: 1 1 auto;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            footer .social {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 22px;
+            }
+
+            .hero-text h1 {
+                font-size: 28px;
+            }
+
+            .btn-primary {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-   <h1><a href="pdf_Index.html">PDF edit 1</a> </h1>
-    <h1><a href="Pdf Editor With Eraser.html">PDF edit 2</a> </h1>
-  
-  <h1>Выбери предмет</h1>
-  <div id="subjectScreen"></div>
-  <div id="variantScreen" class="hidden"></div>
-  <div id="quizScreen" class="hidden"></div>
-  <div id="resultScreen" class="hidden"></div>
 
-  <script>
-    const subjects = ["Информатика", "География", "Биология", "История", "Основы права"];
-    const subjectScreen = document.getElementById("subjectScreen");
-    const variantScreen = document.getElementById("variantScreen");
-    const quizScreen = document.getElementById("quizScreen");
-    const resultScreen = document.getElementById("resultScreen");
+    <!-- ==================== ХЕДЕР ==================== -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-cake"></i>Сарыөзек<span>Торт</span>
+            </div>
+            <div class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <nav>
+                <ul id="navMenu">
+                    <li><a href="#products">Тәттілер</a></li>
+                    <li><a href="#loyalty">Лоялдық</a></li>
+                    <li><a href="#contact">Байланыс</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-    let currentSubject = "";
-    let currentVariant = "";
-    let currentQuestions = [];
-    let userAnswers = [];
-    let currentQuestionIndex = 0;
+    <!-- ==================== БАТЫР (HERO) ==================== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-text">
+                <h1>
+                    <span>Айдана</span> тәттілер әлеміне қош келдіңіз!<br />
+                    
+                </h1>
+                <p>
+                    Айдана тәттілер әлемі – дәстүрлі және заманауи десерттер,
+                    қолдан жасалған торттар мен тәтті тағамдар.
+                </p>
+                <a href="#products" class="btn-primary">
+                    <i class="fas fa-shopping-bag"></i> Тапсырыс беру
+                </a>
+            </div>
+            <div class="hero-image">
+                <!-- Суретті өз суретіңізбен ауыстырыңыз -->
+                <img src="milkygirl-cake_h_1.jpg" alt="Айдана тәттілер" />
+            </div>
+        </div>
+    </section>
 
-    subjects.forEach(subj => {
-      const div = document.createElement("div");
-      div.className = "subject";
-      div.innerText = subj;
-      div.onclick = () => showVariants(subj);
-      subjectScreen.appendChild(div);
-    });
+    <!-- ==================== ӨНІМДЕР ==================== -->
+    <div class="container" id="products">
+        <h2 class="section-title">Біздің тәттілер</h2>
+        <div class="products-grid">
 
-    function showVariants(subject) {
-      currentSubject = subject;
-      subjectScreen.classList.add("hidden");
-      variantScreen.classList.remove("hidden");
-      variantScreen.innerHTML = `<h2>${subject}: Выбери вариант</h2>`;
+            <!-- Карточка 1 -->
+            <div class="product-card">
+                <img src="https://picsum.photos/seed/cake2/400/300" alt="Торт" />
+                <h3>Малиналы торт</h3>
+                <p>Жұмсақ бисквит, қаймақ кремі</p>
+                <span class="price">4 500 ₸</span>
+            </div>
 
-      for (let i = 1; i <= 8; i++) {
-        const div = document.createElement("div");
-        div.className = "variant";
-        div.innerText = `Вариант ${i}`;
-        div.onclick = () => loadTest(subject, i);
-        variantScreen.appendChild(div);
-      }
-    }
+            <!-- Карточка 2 -->
+            <div class="product-card">
+                <img src="https://picsum.photos/seed/cake3/400/300" alt="Макарон" />
+                <h3>Макарон</h3>
+                <p>Түрлі-түсті, хош иісті</p>
+                <span class="price">2 800 ₸</span>
+            </div>
 
-    async function loadTest(subject, variantNumber) {
-      currentVariant = variantNumber;
-      variantScreen.classList.add("hidden");
-      quizScreen.classList.remove("hidden");
-      quizScreen.innerHTML = "Загрузка...";
+            <!-- Карточка 3 -->
+            <div class="product-card">
+                <img src="https://picsum.photos/seed/cake4/400/300" alt="Пирожное" />
+                <h3>Эклер</h3>
+                <p>Қаймақ толтырмалы, шоколад глазурі</p>
+                <span class="price">1 200 ₸</span>
+            </div>
 
-      try {
-        if (subject == "Информатика" && variantNumber == 1) {
-          const res = await fetch('quiz_informatika_variant1.json');
-          currentQuestions = await res.json();
+            <!-- Карточка 4 -->
+            <div class="product-card">
+                <img src="https://picsum.photos/seed/cake5/400/300" alt="Печенье" />
+                <h3>Печенье</h3>
+                <p>Қытырлақ, шоколад кесектері</p>
+                <span class="price">2 000 ₸</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== ЛОЯЛДЫҚ БӨЛІМІ ==================== -->
+    <div class="container" id="loyalty">
+        <div class="loyalty-section">
+            <div class="loyalty-text">
+                <h2><i class="fas fa-gem"></i> Айдана Loyalty</h2>
+                <p>
+                    Жинақтау жүйесіне қосылып, әрбір сатып алуыңыздан
+                    бонустар жинаңыз! Төмендегі батырма арқылы жеке
+                    QR-кодыңызды жасаңыз.
+                </p>
+                <p style="font-size: 16px; color: #7a5a52;">
+                    <i class="fas fa-check-circle" style="color:#b5654b;"></i>
+                    5000+, 10000+, 20000+ сомаларына арналған QR-кодтар
+                    да бар.
+                </p>
+            </div>
+            <div class="loyalty-qr">
+                <div id="profileQr">
+                    <p style="color:#999;">QR көрсету</p>
+                </div>
+                <button id="profileQrBtn"><i class="fas fa-qrcode"></i> Профиль QR</button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap;">
+                    <button id="bt50" style="background:#d4886a; border:none; color:#fff; padding:6px 16px; border-radius:30px; cursor:pointer;">5000+</button>
+                    <button id="bt100" style="background:#b5654b; border:none; color:#fff; padding:6px 16px; border-radius:30px; cursor:pointer;">10000+</button>
+                    <button id="bt  200" style="background:#8f4d3b; border:none; color:#fff; padding:6px 16px; border-radius:30px; cursor:pointer;">20000+</button>
+                </div>
+                <div id="qrcode" style="margin-top:12px; min-height:100px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ТӨМЕНГІ ДЕРЕКТЕР ==================== -->
+    <footer id="contact">
+        <div class="container">
+            <div>
+                <h3><i class="fas fa-store"></i> Айдана тәттілер</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> +7 777 123 45 67</li>
+                    <li><i class="fas fa-envelope"></i> aidana@sweets.kz</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Алматы, Достық 123</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Жұмыс уақыты</h3>
+                <ul>
+                    <li>Дс – Жм: 09:00 – 21:00</li>
+                    <li>Сн – Жк: 10:00 – 20:00</li>
+                </ul>
+            </div>
+            <div>
+                <h3>Бізбен байланыс</h3>
+                <div class="social">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2026 Айдана тәттілер әлемі. Барлық құқықтар қорғалған.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== QR КІТАПХАНАСЫ ЖӘНЕ СКРИПТ ==================== -->
+    <!-- Біз бір ғана qrcodejs кітапханасын қолданамыз -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
+    <script>
+        // ---------- Мобильді мәзір ----------
+        document.getElementById('navToggle').addEventListener('click', function() {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+
+        // ---------- QR кодтар ----------
+        // Профиль QR
+        document.getElementById('profileQrBtn').addEventListener('click', function() {
+            const container = document.getElementById('profileQr');
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: 'Айдана профилі: 123456',
+                width: 180,
+                height: 180,
+                colorDark: '#4a2c2a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        });
+
+        // Сома QR
+        function generateAmountQR(amount) {
+            const container = document.getElementById('qrcode');
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: String(amount),
+                width: 150,
+                height: 150,
+                colorDark: '#4a2c2a',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
         }
-        else {
-          currentQuestions = [
-            {
-              question: "Заглушка: Сколько будет 2 + 2?",
-              options: ["3", "4", "5", "6"],
-              answer: 1
-            }
-          ];
-        }
 
-        userAnswers = [];
-        currentQuestionIndex = 0;
-        showNextQuestion();
-      } catch (error) {
-        quizScreen.innerHTML = "Ошибка загрузки теста.";
-        console.error(error);
-      }
-    }
+        document.getElementById('btn50').addEventListener('click', function() {
+            generateAmountQR(5000);
+        });
+        document.getElementById('btn100').addEventListener('click', function() {
+            generateAmountQR(10000);
+        });
+        document.getElementById('btn200').addEventListener('click', function() {
+            generateAmountQR(20000);
+        });
+    </script>
 
-    function showNextQuestion() {
-      quizScreen.innerHTML = "";
-    
-      const q = currentQuestions[currentQuestionIndex];
-      const div = document.createElement("div");
-      div.className = "question";
-      div.innerHTML = `
-        <h2>${currentSubject} — Вариант ${currentVariant}</h2>
-        <p>${currentQuestionIndex + 1}) ${q.question}</p>
-      `;
-    
-      q.options.forEach((option, index) => {
-        const btn = document.createElement("button");
-        btn.innerText = option;
-        btn.onclick = () => submitAnswer(index); // передаём индекс!
-        btn.style.display = "block";
-        btn.style.margin = "10px 0";
-        div.appendChild(btn);
-      });
-    
-      quizScreen.appendChild(div);
-    }
-    
-    function submitAnswer(selectedIndex) {
-      userAnswers.push(selectedIndex);
-      currentQuestionIndex++;
-    
-      if (currentQuestionIndex < currentQuestions.length) {
-        showNextQuestion();
-      } else {
-        showResults();
-      }
-    }
-
-
-    
-    function showResults() {
-      quizScreen.classList.add("hidden");
-      resultScreen.classList.remove("hidden");
-      resultScreen.innerHTML = `<h2>Результат</h2>`;
-    
-      let score = 0;
-      const table = document.createElement("table");
-      table.innerHTML = `<tr><th>Вопрос</th><th>Правильный</th><th>Ты выбрал</th></tr>`;
-    
-      currentQuestions.forEach((q, i) => {
-        const userIndex = userAnswers[i];
-        const correctIndex = q.answer;
-    
-        const isCorrect = userIndex === correctIndex;
-        if (isCorrect) score++;
-    
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${q.question}</td>
-          <td>${q.options[correctIndex]}</td>
-          <td style="color: ${isCorrect ? 'green' : 'red'}">${q.options[userIndex]}</td>
-        `;
-        table.appendChild(row);
-      });
-    
-      resultScreen.appendChild(table);
-      resultScreen.innerHTML += `<p><strong>Ты набрал: ${score} из ${currentQuestions.length}</strong></p>`;
-      const btn = document.createElement("button");
-      btn.innerText = "В меню";
-      btn.onclick = () => location.reload();
-      resultScreen.appendChild(btn);
-    }
-
-  </script>
-
-
-
-
-  <!-- 🔒 Проверка доступа по Telegram ID -->
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      const tg = window.Telegram.WebApp;
-      tg.expand();
-  
-      const allowedUserIds = [1290894872, 886699157, 1769921919, 5753185297]; // 🔁 ЗАМЕНИ СЮДА свои user.id
-      const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-  
-      if (!user) {
-        // Пользователь не открыл через Telegram WebApp
-        document.body.innerHTML = `
-          <div style="text-align:center;padding:40px;font-family:sans-serif">
-            <h2>🚫 Откройте через Telegram</h2>
-            <p>Пожалуйста, запустите это приложение через Telegram-бота.</p>
-          </div>
-        `;
-        return;
-      }
-  
-      if (!allowedUserIds.includes(user.id)) {
-        // Пользователь не в списке разрешённых
-        document.body.innerHTML = `
-          <div style="text-align:center;padding:40px;font-family:sans-serif">
-            <h2>🚫 Доступ запрещён</h2>
-            <p>Ваш Telegram ID: <b>${user.id}</b></p>
-            <p>Обратитесь к администратору.</p>
-          </div>
-        `;
-        return;
-      }
-  
-      // Если пользователь разрешён — можно продолжать
-      console.log("✅ Доступ разрешён для: " + user.username + " (ID: " + user.id + ")");
-    });
-  </script>
 </body>
 </html>
