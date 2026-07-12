@@ -1,0 +1,344 @@
+body{
+
+    font-family:Arial;
+    
+    max-width:600px;
+    
+    margin:auto;
+    
+    padding:20px;
+    
+    }
+    
+    button{
+    
+    width:100%;
+    
+    height:60px;
+    
+    font-size:22px;
+    
+    margin:10px 0;
+    
+    cursor:pointer;
+    
+    }
+    
+    #qrcode{
+    
+    margin-top:30px;
+    
+    display:flex;
+    
+    justify-content:center;
+    
+    }
+
+    input{
+
+        width:100%;
+        
+        height:50px;
+        
+        font-size:20px;
+        
+        padding:10px;
+        
+        box-sizing:border-box;
+        
+        margin-top:10px;
+        
+        }
+
+
+        body{
+
+            background:#fff7f0;
+            
+            font-family:Arial, sans-serif;
+            
+            }
+            
+            
+            .card{
+            
+            max-width:450px;
+            
+            margin:30px auto;
+            
+            background:white;
+            
+            padding:25px;
+            
+            border-radius:20px;
+            
+            box-shadow:0 5px 20px rgba(0,0,0,0.1);
+            
+            text-align:center;
+            
+            }
+            
+            
+            .points-box{
+            
+            font-size:32px;
+            
+            font-weight:bold;
+            
+            margin:20px 0;
+            
+            padding:20px;
+            
+            border-radius:15px;
+            
+            background:#ffe7b3;
+            
+            }
+            
+            
+            .info{
+            
+            font-size:20px;
+            
+            }
+            
+            
+            #history p{
+            
+            background:#fafafa;
+            
+            padding:12px;
+            
+            border-radius:10px;
+            
+            margin:8px 0;
+            
+            font-size:18px;
+            
+            }
+
+
+
+
+            .level-box{
+
+                margin-top:20px;
+                
+                padding:20px;
+                
+                background:#ffe6f2;
+                
+                border-radius:20px;
+                
+                font-size:18px;
+                
+                }
+                
+                
+                .level-box h2{
+                
+                font-size:28px;
+                
+                }
+
+
+
+
+
+
+
+
+                body{
+
+                    background:#fff6f0;
+                    
+                    font-family:Arial, sans-serif;
+                    
+                    }
+                    
+                    
+                    
+                    .seller-card{
+                    
+                    max-width:450px;
+                    
+                    margin:20px auto;
+                    
+                    padding:25px;
+                    
+                    background:white;
+                    
+                    border-radius:25px;
+                    
+                    box-shadow:0 5px 20px rgba(0,0,0,.1);
+                    
+                    text-align:center;
+                    
+                    }
+                    
+                    
+                    
+                    .sell-btn{
+                    
+                    width:100%;
+                    
+                    padding:18px;
+                    
+                    margin:10px 0;
+                    
+                    font-size:18px;
+                    
+                    border:none;
+                    
+                    border-radius:15px;
+                    
+                    background:#ffb6c1;
+                    
+                    cursor:pointer;
+                    
+                    }
+                    
+                    
+                    
+                    .sell-btn:hover{
+                    
+                    transform:scale(1.03);
+                    
+                    }
+                    
+                    
+                    
+                    .profile-btn{
+                    
+                    width:100%;
+                    
+                    padding:15px;
+                    
+                    font-size:18px;
+                    
+                    border:none;
+                    
+                    border-radius:15px;
+                    
+                    background:#ffd966;
+                    
+                    }
+                    
+                    
+                    
+                    #qrBox{
+                    
+                    margin-top:25px;
+                    
+                    padding:20px;
+                    
+                    background:#fafafa;
+                    
+                    border-radius:20px;
+                    
+                    }
+                    
+                    
+                    #qrInfo{
+                    
+                    font-size:18px;
+                    
+                    margin-top:15px;
+                    
+                    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    .profile-card{
+
+                        max-width:450px;
+                        
+                        margin:20px auto;
+                        
+                        padding:25px;
+                        
+                        background:white;
+                        
+                        border-radius:25px;
+                        
+                        text-align:center;
+                        
+                        box-shadow:0 5px 20px rgba(0,0,0,.1);
+                        
+                        }
+                        
+                        
+                        
+                        .level-card{
+                        
+                        background:#ffe6f2;
+                        
+                        padding:20px;
+                        
+                        border-radius:20px;
+                        
+                        margin:20px 0;
+                        
+                        }
+                        
+                        
+                        
+                        .points-card{
+                        
+                        font-size:35px;
+                        
+                        font-weight:bold;
+                        
+                        background:#fff0b3;
+                        
+                        padding:25px;
+                        
+                        border-radius:20px;
+                        
+                        margin:20px 0;
+                        
+                        }
+                        
+                        
+                        
+                        .visit-card{
+                        
+                        font-size:20px;
+                        
+                        padding:15px;
+                        
+                        }
+                        
+                        
+                        
+                        #history p{
+                        
+                        background:#fafafa;
+                        
+                        padding:15px;
+                        
+                        border-radius:15px;
+                        
+                        margin:10px 0;
+                        
+                        }
+                        
+                        
+                        
+                        #nextLevel{
+                        
+                        font-size:18px;
+                        
+                        color:#777;
+                        
+                        }
