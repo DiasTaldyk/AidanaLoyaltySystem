@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тамыз кеңесі – Орталық экран</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0b1a2e;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .display-header {
+            text-align: center;
+            padding: 20px 0 10px;
+            border-bottom: 2px solid #d4a12a;
+            margin-bottom: 20px;
+        }
+
+        .display-header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .display-header h1 span {
+            color: #d4a12a;
+        }
+
+        .display-header .sub {
+            font-size: 1.2rem;
+            color: #b0bec5;
+        }
+
+        .greeting-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 40px;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(212,161,42,0.3);
+            transition: 0.3s;
+        }
+
+        .greeting-text {
+            font-size: 3.5rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.4;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(212,161,42,0.4);
+        }
+
+        .greeting-text .name {
+            color: #d4a12a;
+        }
+
+        .greeting-text .welcome {
+            font-weight: 300;
+            font-size: 2.5rem;
+        }
+
+        .greeting-text .section-info {
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #b0bec5;
+            margin-top: 8px;
+        }
+
+        .greeting-text .section-info strong {
+            color: #d4a12a;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .section-card {
+            background: rgba(255,255,255,0.07);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 16px 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-card:hover {
+            background: rgba(255,255,255,0.13);
+        }
+
+        .section-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #d4a12a;
+            margin-bottom: 6px;
+        }
+
+        .section-detail {
+            font-size: 0.85rem;
+            color: #b0bec5;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .section-detail strong {
+            color: #eceff1;
+        }
+
+        .btn-list {
+            background: rgba(212,161,42,0.2);
+            border: 1px solid #d4a12a;
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+            align-self: flex-start;
+            margin-top: 4px;
+        }
+
+        .btn-list:hover {
+            background: #d4a12a;
+            color: #0b1a2e;
+        }
+
+        .qr-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .qr-area img {
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 6px;
+        }
+
+        .qr-label {
+            font-size: 1rem;
+            color: #b0bec5;
+        }
+
+        .qr-label strong {
+            color: #d4a12a;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a2f44;
+            border-radius: 30px;
+            padding: 30px 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+            border: 1px solid #d4a12a;
+        }
+
+        .modal-content h2 {
+            color: #d4a12a;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(212,161,42,0.3);
+            padding-bottom: 10px;
+        }
+
+        .modal-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .modal-content ul li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #eceff1;
+        }
+
+        .modal-content ul li strong {
+            color: #d4a12a;
+        }
+
+        .modal-close {
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: #d4a12a;
+            border: none;
+            border-radius: 30px;
+            color: #0b1a2e;
+            font-weight: 700;
+            cursor: pointer;
+            float: right;
+        }
+
+        .modal-close:hover {
+            background: #b8860b;
+        }
+
+        .queue-status {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #78909c;
+            margin-top: 6px;
+            min-height: 24px;
+        }
+
+        /* Firebase байланыс статусы */
+        .connection-status {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #78909c;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 700px) {
+            .greeting-text {
+                font-size: 2.5rem;
+            }
+
+            .display-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 450px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="connection-status" id="connectionStatus">
+    🔄 Базаға қосылуда...
+</div>
+
+<div class="display-header">
+    <h1>📚 Тамыз кеңесі <span>2026</span></h1>
+    <div class="sub">Қош келдіңіздер, ұстаздар!</div>
+</div>
+
+
+<div class="greeting-area" id="greetingArea">
+
+    <div class="greeting-text" id="greetingText">
+
+        <span class="name">Тамыз кеңесі</span>
+        <br>
+
+        <span class="welcome">
+            Қатысушылар күтілуде...
+        </span>
+
+    </div>
+
+</div>
+
+
+<div class="queue-status" id="queueStatus">
+    Кезекте ешкім жоқ
+</div>
+
+
+<div class="sections-grid" id="sectionsContainer"></div>
+
+
+<div class="qr-area">
+
+    <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='white'/%3E%3Crect width='70' height='70' x='15' y='15' fill='black'/%3E%3Crect width='10' height='10' x='25' y='25' fill='white'/%3E%3Crect width='10' height='10' x='45' y='25' fill='white'/%3E%3Crect width='10' height='10' x='65' y='25' fill='white'/%3E%3Crect width='10' height='10' x='25' y='45' fill='white'/%3E%3Crect width='10' height='10' x='45' y='45' fill='white'/%3E%3Crect width='10' height='10' x='65' y='45' fill='white'/%3E%3Crect width='10' height='10' x='25' y='65' fill='white'/%3E%3Crect width='10' height='10' x='45' y='65' fill='white'/%3E%3Crect width='10' height='10' x='65' y='65' fill='white'/%3E%3C/svg%3E"
+        alt="QR код"
+    />
+
+    <div class="qr-label">
+
+        <strong>
+            📱 Сканерлеп, тіркеліңіз
+        </strong>
+
+        <br>
+
+        <span style="font-size:0.85rem;">
+            QR-код әрқашан осы жерде
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- Модал -->
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <h2 id="modalTitle">
+            Секция атауы
+        </h2>
+
+        <ul id="modalList"></ul>
+
+        <button class="modal-close" id="modalClose">
+            Жабу
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // ============================================================
+    // FIREBASE CONFIG
+    // ============================================================
+
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyA7jbyS3XuxCpqRW5OTeyxeD10iAT2MZ0E",
+
+        authDomain:
+            "pycontrolextension.firebaseapp.com",
+
+        projectId:
+            "pycontrolextension",
+
+        storageBucket:
+            "pycontrolextension.firebasestorage.app",
+
+        messagingSenderId:
+            "663654598129",
+
+        appId:
+            "1:663654598129:web:7ca9e7c748c10c8454b050"
+
+    };
+
+
+    // ============================================================
+    // FIREBASE START
+    // ============================================================
+
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.firestore();
+
+    const COLLECTION = "49 ОМ тіркелу";
+
+
+    // ============================================================
+    // CONNECTION STATUS
+    // ============================================================
+
+    const connectionStatus =
+        document.getElementById("connectionStatus");
+
+
+
+    // ============================================================
+    // SECTIONS
+    // ============================================================
+
+    const sections = [
+		{
+            name: "АӘД",
+            cabinet: "2"
+        },
+		{
+            name: "Дене шынықтыру",
+            cabinet: "7"
+        },
+		{
+            name: "ДТІЖО",
+            cabinet: "18"
+        },
+		{
+            name: "География",
+            cabinet: "23"
+        },
+		{
+            name: "Кітапхана",
+            cabinet: "11"
+        },
+		{
+            name: "Көркем еңбек",
+            cabinet: "5"
+        },
+		{
+            name: "Информатика",
+            cabinet: "16"
+        },
+
+
+
+
+        {
+            name: "Математика",
+            cabinet: "22"
+        },
+		
+        {
+            name: "Музыка",
+            cabinet: "5"
+        },
+		
+		{
+            name: "Ұстаз ұйымдастырушы",
+            cabinet: "26"
+        },
+		
+		
+
+        {
+            name: "Физика",
+            cabinet: "17"
+        },
+
+        {
+            name: "Химия-биология",
+            cabinet: "21"
+        }
+
+    ];
+
+
+    // ============================================================
+    // CABINET MAP
+    // ============================================================
+
+    const cabinetMap = {};
+
+    sections.forEach(section => {
+
+        cabinetMap[section.name] =
+            section.cabinet;
+
+    });
+
+
+    // ============================================================
+    // SECTION CARDS
+    // ============================================================
+
+    const container =
+        document.getElementById("sectionsContainer");
+
+
+    sections.forEach(section => {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "section-card";
+
+
+        card.innerHTML = `
+
+            <div class="section-name">
+                ${section.name}
+            </div>
+
+            <div class="section-detail">
+
+                <strong>
+                    Кабинет:
+                </strong>
+
+                ${section.cabinet}
+
+            </div>
+
+            <button
+                class="btn-list"
+                data-section="${section.name}"
+            >
+
+                📋 Қатысушылар
+
+            </button>
+
+        `;
+
+
+        container.appendChild(card);
+
+    });
+
+
+    // ============================================================
+    // MODAL
+    // ============================================================
+
+    const modal =
+        document.getElementById("modal");
+
+    const modalTitle =
+        document.getElementById("modalTitle");
+
+    const modalList =
+        document.getElementById("modalList");
+
+    const modalClose =
+        document.getElementById("modalClose");
+
+
+
+    function openModal(sectionName) {
+
+        modalTitle.textContent =
+            `📌 ${sectionName} – қатысушылар`;
+
+        modalList.innerHTML =
+            "<li>Жүктелуде...</li>";
+
+        modal.classList.add("active");
+
+
+        db.collection(COLLECTION)
+
+            .where(
+                "section",
+                "==",
+                sectionName
+            )
+
+            .get()
+
+            .then(snapshot => {
+
+                if (snapshot.empty) {
+
+                    modalList.innerHTML =
+                        "<li>Әзірге тіркелген жоқ</li>";
+
+                    return;
+                }
+
+
+                const participants = [];
+
+
+                snapshot.forEach(doc => {
+
+                    const data =
+                        doc.data();
+
+
+                    participants.push({
+
+                        fullName:
+                            data.fullName || "Аты көрсетілмеген",
+
+                        school:
+                            data.school ||
+                            "мектеп көрсетілмеген",
+
+                        timestamp:
+                            data.timestamp
+
+                    });
+
+                });
+
+
+                // Уақыт бойынша сұрыптау
+
+                participants.sort((a, b) => {
+
+                    const ta =
+                        a.timestamp?.toMillis
+                            ? a.timestamp.toMillis()
+                            : 0;
+
+                    const tb =
+                        b.timestamp?.toMillis
+                            ? b.timestamp.toMillis()
+                            : 0;
+
+                    return ta - tb;
+
+                });
+
+
+                let html = "";
+
+
+                participants.forEach(person => {
+
+                    html += `
+
+                        <li>
+
+                            <strong>
+                                ${escapeHtml(person.fullName)}
+                            </strong>
+
+                            – ${escapeHtml(person.school)}
+
+                        </li>
+
+                    `;
+
+                });
+
+
+                modalList.innerHTML = html;
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Қатысушыларды оқу қатесі:",
+                    error
+                );
+
+
+                modalList.innerHTML = `
+
+                    <li style="color:#ef9a9a;">
+
+                        Қате:
+                        ${escapeHtml(error.message)}
+
+                    </li>
+
+                `;
+
+            });
+
+    }
+
+
+
+    // HTML қауіпсіздігі
+
+    function escapeHtml(value) {
+
+        if (value === null ||
+            value === undefined) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+
+            .replace(/&/g, "&amp;")
+
+            .replace(/</g, "&lt;")
+
+            .replace(/>/g, "&gt;")
+
+            .replace(/"/g, "&quot;")
+
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+
+    container.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target.classList.contains(
+                    "btn-list"
+                )
+            ) {
+
+                const section =
+                    event.target.dataset.section;
+
+                openModal(section);
+
+            }
+
+        }
+    );
+
+
+
+    modalClose.addEventListener(
+        "click",
+        () => {
+
+            modal.classList.remove(
+                "active"
+            );
+
+        }
+    );
+
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === modal
+            ) {
+
+                modal.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+    );
+
+
+
+    // ============================================================
+    // GREETING / QUEUE
+    // ============================================================
+
+    const greetingText =
+        document.getElementById(
+            "greetingText"
+        );
+
+
+    const queueStatus =
+        document.getElementById(
+            "queueStatus"
+        );
+
+
+    // Кезек
+
+    let queue = [];
+
+
+    // Қазіргі уақытта көрсетіліп жатқан адам
+
+    let currentPerson = null;
+
+
+    // Экранда біреу көрсетіліп жатыр ма?
+
+    let isShowing = false;
+
+
+    let currentTimeout = null;
+
+
+    // Бұрын кезекке алынған ID-лер
+
+    const queuedIds = new Set();
+
+
+
+    // ============================================================
+    // DEFAULT SCREEN
+    // ============================================================
+
+    function showWaitingScreen() {
+
+        greetingText.innerHTML = `
+
+            <span class="name">
+                Тамыз кеңесі
+            </span>
+
+            <br>
+
+            <span class="welcome">
+                Қатысушылар күтілуде...
+            </span>
+
+        `;
+
+
+        queueStatus.textContent =
+            "Кезекте ешкім жоқ";
+
+    }
+
+
+
+    // ============================================================
+    // QUEUE STATUS
+    // ============================================================
+
+    function updateQueueStatus() {
+
+        if (isShowing) {
+
+            queueStatus.textContent =
+                `Кезекте: ${queue.length} адам`;
+
+            return;
+
+        }
+
+
+        if (queue.length > 0) {
+
+            queueStatus.textContent =
+                `Кезекте: ${queue.length} адам`;
+
+            return;
+
+        }
+
+
+        queueStatus.textContent =
+            "Кезекте ешкім жоқ";
+
+    }
+
+
+
+    // ============================================================
+    // PROCESS QUEUE
+    // ============================================================
+
+    function processQueue() {
+
+        if (isShowing) {
+
+            updateQueueStatus();
+
+            return;
+
+        }
+
+
+        if (queue.length === 0) {
+
+            showWaitingScreen();
+
+            return;
+
+        }
+
+
+        isShowing = true;
+
+
+        const person =
+            queue.shift();
+
+
+        currentPerson =
+            person;
+
+
+        updateQueueStatus();
+
+
+        const sectionName =
+            person.section ||
+            "Секция көрсетілмеген";
+
+
+        const cabinet =
+            cabinetMap[sectionName] ||
+            "?";
+
+
+        greetingText.innerHTML = `
+
+            <span class="name">
+
+                ${escapeHtml(
+                    person.fullName ||
+                    "Қатысушы"
+                )}
+
+            </span>
+
+            <br>
+
+            <span class="welcome">
+
+                ұстаз, хош келдіңіз!
+
+            </span>
+
+            <div class="section-info">
+
+                ${escapeHtml(sectionName)}
+
+                (каб. ${escapeHtml(cabinet)})
+
+            </div>
+
+        `;
+
+
+        // ========================================================
+        // 3 СЕКУНД КҮТЕМІЗ
+        // ========================================================
+
+        currentTimeout =
+            setTimeout(async () => {
+
+                try {
+
+                    // Құжатты базаға
+                    // displayed=true деп белгілейміз
+
+                    await db
+
+                        .collection(COLLECTION)
+
+                        .doc(person.id)
+
+                        .update({
+
+                            displayed: true
+
+                        });
+
+
+                    console.log(
+                        "Қатысушы көрсетілді:",
+                        person.fullName
+                    );
+
+                }
+
+                catch (error) {
+
+                    console.error(
+                        "displayed жаңарту қатесі:",
+                        error
+                    );
+
+                }
+
+
+                // ID енді қайта кезекке түспейді
+
+                queuedIds.delete(
+                    person.id
+                );
+
+
+                currentPerson = null;
+
+                isShowing = false;
+
+
+                updateQueueStatus();
+
+
+                // Келесі адам
+
+                processQueue();
+
+
+            }, 3000);
+
+    }
+
+
+
+    // ============================================================
+    // FIRESTORE REALTIME LISTENER
+    // ============================================================
+    //
+    // МАҢЫЗДЫ:
+    //
+    // Бұрын:
+    //
+    // .where("displayed", "==", false)
+    //
+    // қолданылған.
+    //
+    // Енді барлық құжатты тыңдаймыз.
+    //
+    // displayed === true болса ғана өткізіп жібереміз.
+    //
+    // Сондықтан displayed өрісі мүлде жоқ жаңа
+    // қатысушы да экранға шығады.
+    // ============================================================
+
+
+    db.collection(COLLECTION)
+
+        .onSnapshot(
+
+            snapshot => {
+
+                connectionStatus.textContent =
+                    "🟢 Базаға қосылды";
+
+
+                console.log(
+                    "Firestore жаңарды. Құжат саны:",
+                    snapshot.size
+                );
+
+
+                const newParticipants = [];
+
+
+                snapshot.forEach(doc => {
+
+                    const data =
+                        doc.data();
+
+
+                    // ==========================================
+                    // DISPLAYED TRUE болса
+                    // оны қайта көрсетпейміз
+                    // ==========================================
+
+                    if (
+                        data.displayed === true
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    // ==========================================
+                    // Міндетті түрде fullName болуы керек
+                    // ==========================================
+
+                    if (
+                        !data.fullName
+                    ) {
+
+                        console.warn(
+                            "fullName жоқ құжат:",
+                            doc.id
+                        );
+
+                        return;
+
+                    }
+
+
+                    // ==========================================
+                    // Бұл адам бұрын кезекке алынбаған ба?
+                    // ==========================================
+
+                    if (
+                        queuedIds.has(doc.id)
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    // ==========================================
+                    // Кезекке қосамыз
+                    // ==========================================
+
+                    queuedIds.add(doc.id);
+
+
+                    newParticipants.push({
+
+                        id:
+                            doc.id,
+
+                        fullName:
+                            data.fullName,
+
+                        section:
+                            data.section ||
+                            "Секция көрсетілмеген",
+
+                        school:
+                            data.school ||
+                            "",
+
+                        timestamp:
+                            data.timestamp
+
+                    });
+
+                });
+
+
+                // ==========================================
+                // Timestamp бойынша сұрыптау
+                // ==========================================
+
+                newParticipants.sort(
+                    (a, b) => {
+
+                        const timeA =
+                            a.timestamp?.toMillis
+                                ? a.timestamp.toMillis()
+                                : Date.now();
+
+                        const timeB =
+                            b.timestamp?.toMillis
+                                ? b.timestamp.toMillis()
+                                : Date.now();
+
+                        return timeA - timeB;
+
+                    }
+                );
+
+
+                // ==========================================
+                // Жаңа адамдарды кезекке қосамыз
+                // ==========================================
+
+                if (
+                    newParticipants.length > 0
+                ) {
+
+                    console.log(
+                        "Жаңа қатысушылар:",
+                        newParticipants
+                    );
+
+
+                    queue.push(
+                        ...newParticipants
+                    );
+
+
+                    updateQueueStatus();
+
+
+                    if (!isShowing) {
+
+                        processQueue();
+
+                    }
+
+                }
+
+                else {
+
+                    updateQueueStatus();
+
+                }
+
+            },
+
+
+            error => {
+
+                console.error(
+                    "Firestore onSnapshot қатесі:",
+                    error
+                );
+
+
+                connectionStatus.textContent =
+                    "🔴 Базаға қосылу қатесі";
+
+
+                queueStatus.textContent =
+                    "Базамен байланыс қатесі: " +
+                    error.message;
+
+            }
+
+        );
+
+
+</script>
+
+</body>
+</html>

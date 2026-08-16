@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Тамыз кеңесі – Тіркелу</title>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #0b1a2e, #1a2f44);
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.96);
+            border-radius: 40px;
+            padding: 40px 36px 32px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .card h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0b1a2e;
+            margin-bottom: 6px;
+        }
+        .card h1 span { color: #d4a12a; }
+        .sub {
+            color: #546e7a;
+            font-size: 15px;
+            border-left: 4px solid #d4a12a;
+            padding-left: 14px;
+            margin-bottom: 28px;
+            background: #f5f7fa;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.4;
+            padding: 8px 14px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a2f44;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 2px solid #e0e7ef;
+            border-radius: 16px;
+            background: #fafcff;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #d4a12a;
+            box-shadow: 0 0 0 4px rgba(212,161,42,0.2);
+            outline: none;
+        }
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            border: none;
+            border-radius: 40px;
+            background: linear-gradient(135deg, #d4a12a, #b8860b);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(212,161,42,0.35);
+            transition: 0.2s;
+            margin-top: 6px;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,161,42,0.5); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-danger {
+            background: #c62828;
+            box-shadow: 0 8px 24px rgba(198,40,40,0.3);
+        }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 12px 32px rgba(198,40,40,0.5); }
+        .msg {
+            margin-top: 16px;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-weight: 500;
+            display: none;
+        }
+        .msg.success { display: block; background: #e8f5e9; color: #1e5a2a; border-left: 5px solid #2e7d32; }
+        .msg.error { display: block; background: #ffebee; color: #b71c1c; border-left: 5px solid #c62828; }
+        .msg.info { display: block; background: #e3f2fd; color: #0d47a1; border-left: 5px solid #1565c0; }
+        .msg.loading { display: block; background: #e3f2fd; color: #0d47a1; border-left: 5px solid #1565c0; }
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #78909c;
+            border-top: 1px solid #e8ecf0;
+            padding-top: 18px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: #1565c0;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .already-registered {
+            background: #fff8e1;
+            border: 2px solid #d4a12a;
+            border-radius: 16px;
+            padding: 20px 18px;
+            margin-bottom: 20px;
+            color: #4e342e;
+        }
+        .already-registered .info-text {
+            font-size: 1.1rem;
+            margin: 10px 0 16px;
+        }
+        .hidden { display: none; }
+        .mt-2 { margin-top: 12px; }
+        .btn-block { width: 100%; }
+        #statusTitle {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .room-badge {
+            display: inline-block;
+            background: #d4a12a;
+            color: #fff;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+        .redirect-note {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: #546e7a;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>📚 Тамыз кеңесі <span>2026</span></h1>
+    <div class="sub">✧ Ұстаздарды тіркеу парағы – барлық өрістер міндетті</div>
+
+    <!-- Бұрын тіркелген болса, мына блок көрінеді, форма жасырылады -->
+    <div id="alreadyRegistered" style="display:none;" class="already-registered">
+        <div id="statusTitle"></div>
+        <div class="info-text" id="regInfo"></div>
+        <div id="roomDisplay" class="room-badge"></div>
+        <div class="redirect-note">⏳ 4 секундтан кейін негізгі бетке өтесіз...</div>
+        <button id="deleteBtn" class="btn btn-danger btn-block" style="margin-top:16px;">🗑 Әзірге уақытша өшіру</button>
+        <div id="deleteMessage" class="msg" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Форма – егер тіркелмеген болса ғана көрінеді -->
+    <div id="formContainer">
+        <form id="regForm">
+            <div class="form-group">
+                <label>Аты-жөні <span style="color:#c62828;">*</span></label>
+                <input type="text" id="fullName" placeholder="Мысалы: Диас Ғазизұлы" required>
+            </div>
+            <div class="form-group">
+                <label>Мектебі <span style="color:#c62828;">*</span></label>
+                <input type="text" id="school" placeholder="№49 ОМ КММ" required>
+            </div>
+            <div class="form-group">
+                <label>Секция бағыты <span style="color:#c62828;">*</span></label>
+                <select id="section" required>
+                    <option value="">— таңдаңыз —</option>
+					<option value="АӘД">АӘД</option>
+					<option value="Дене шынықтыру">Дене шынықтыру</option>
+					<option value="ДТІЖО">ДТІЖО</option>
+                   
+                    <option value="География">География</option>
+                    <option value="Кітапхана">Кітапхана</option>
+                    <option value="Көркем еңбек">Көркем еңбек</option>
+                    <option value="Информатика">Информатика</option>
+                    <option value="Математика">Математика</option>
+                    <option value="Музыка">Музыка</option>
+                    <option value="Ұстаз ұйымдастырушы">Ұстаз ұйымдастырушы</option>
+                   	<option value="Физика">Физика</option>
+                    <option value="Химия-биология">Химия-биология</option>
+                </select>
+            </div>
+            <button type="submit" class="btn" id="submitBtn">✦ Тіркелу</button>
+        </form>
+        <div id="messageBox" class="msg"></div>
+    </div>
+
+    <div class="footer"><strong>📱</strong> Тіркелгеннен кейін атыңыз орталық экранда көрсетіледі</div>
+</div>
+
+<script>
+    // ---- Firebase конфигурация ----
+    const firebaseConfig = {
+        apiKey: "AIzaSyA7jbyS3XuxCpqRW5OTeyxeD10iAT2MZ0E",
+        authDomain: "pycontrolextension.firebaseapp.com",
+        projectId: "pycontrolextension",
+        storageBucket: "pycontrolextension.firebasestorage.app",
+        messagingSenderId: "663654598129",
+        appId: "1:663654598129:web:7ca9e7c748c10c8454b050"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const COLLECTION = "49 ОМ тіркелу";
+
+    // ---------- Секция ↔ кабинет сәйкестігі (өзіңіз толықтыра аласыз) ----------
+    const sectionRoomMap = {
+        "Математика": "22 кабинет",
+        "Информатика": "16 кабинет",
+        "Физика": "17 кабинет",
+        "Кітапхана": "11",
+        "География": "23 кабинет",
+        "Дене шынықтыру": "7",
+        "АӘД": "2",
+        "Ұстаз ұйымдастырушы": "26",
+        "ДТІЖО": "18",
+        "Музыка": "5",
+        "Көркем еңбек": "5",
+        "Химия-биология": "21"
+    };
+
+    function getRoomInfo(section) {
+        return sectionRoomMap[section] || "кабинет белгіленбеген";
+    }
+
+    // DOM
+    const form = document.getElementById('regForm');
+    const fullName = document.getElementById('fullName');
+    const school = document.getElementById('school');
+    const section = document.getElementById('section');
+    const submitBtn = document.getElementById('submitBtn');
+    const msg = document.getElementById('messageBox');
+    const alreadyDiv = document.getElementById('alreadyRegistered');
+    const regInfo = document.getElementById('regInfo');
+    const roomDisplay = document.getElementById('roomDisplay');
+    const formContainer = document.getElementById('formContainer');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const deleteMsg = document.getElementById('deleteMessage');
+    const statusTitle = document.getElementById('statusTitle');
+
+    let registeredData = null;
+    let docId = null;
+    let redirectTimer = null;
+
+    // ---- Redirect басқару ----
+    function scheduleRedirect() {
+        // Бұрынғы таймерді өшіру
+        if (redirectTimer) {
+            clearTimeout(redirectTimer);
+            redirectTimer = null;
+        }
+        // 4 секундтан кейін display.html-ге өту
+        redirectTimer = setTimeout(() => {
+            window.location.href = 'display.html';
+        }, 4000);
+    }
+
+    function cancelRedirect() {
+        if (redirectTimer) {
+            clearTimeout(redirectTimer);
+            redirectTimer = null;
+        }
+    }
+
+    // ---- LocalStorage тексеру ----
+    function checkLocalStorage() {
+        const stored = localStorage.getItem('conference_registered');
+        if (stored) {
+            try {
+                const data = JSON.parse(stored);
+                if (data && data.fullName && data.docId) {
+                    registeredData = data;
+                    docId = data.docId;
+                    return true;
+                }
+            } catch(e) {}
+        }
+        return false;
+    }
+
+    // ---- Күйді көрсету ----
+    function showRegisteredStatus(title, name, sectionName) {
+        statusTitle.textContent = title;
+        regInfo.textContent = `Сіз "${name}" ретінде «${sectionName}» секциясына тіркелдіңіз.`;
+        const room = getRoomInfo(sectionName);
+        roomDisplay.textContent = `🏫 ${room}`;
+        alreadyDiv.style.display = 'block';
+        formContainer.style.display = 'none';
+        // 4 секундтан кейін redirect
+        scheduleRedirect();
+    }
+
+    // ---- Бет жүктелгенде ----
+    if (checkLocalStorage()) {
+        showRegisteredStatus(
+            '✅ Сіз бұрын тіркелгенсіз!',
+            registeredData.fullName,
+            registeredData.section
+        );
+    } else {
+        alreadyDiv.style.display = 'none';
+        formContainer.style.display = 'block';
+    }
+
+    // ---- Хабарлама ----
+    function showMessage(text, type = 'loading') {
+        msg.className = 'msg ' + type;
+        if (type === 'loading') {
+            msg.innerHTML = `<span class="spinner"></span> ${text}`;
+        } else {
+            msg.textContent = text;
+        }
+    }
+    function hideMessage() { msg.className = 'msg'; msg.textContent = ''; }
+
+    // ---- Форма жіберу ----
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (registeredData) {
+            showMessage('Сіз бұрын тіркелгенсіз!', 'info');
+            return;
+        }
+
+        const name = fullName.value.trim();
+        const sch = school.value.trim();
+        const sec = section.value;
+        if (!name || !sch || !sec) {
+            showMessage('Барлық өрістерді толтырыңыз!', 'error');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '✦ Тіркелу...';
+        showMessage('Тіркелу жүруде...', 'loading');
+
+        try {
+            const docRef = await db.collection(COLLECTION).add({
+                fullName: name,
+                school: sch,
+                section: sec,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                displayed: false
+            });
+
+            const saveData = { fullName: name, school: sch, section: sec, docId: docRef.id };
+            localStorage.setItem('conference_registered', JSON.stringify(saveData));
+            registeredData = saveData;
+            docId = docRef.id;
+
+            showRegisteredStatus(
+                '✅ Сіз сәтті тіркелдіңіз!',
+                name,
+                sec
+            );
+
+            showMessage(`✅ ${name}, сіз сәтті тіркелдіңіз!`, 'success');
+            setTimeout(() => { if (msg.classList.contains('success')) hideMessage(); }, 3000);
+        } catch (err) {
+            console.error('Қате:', err);
+            showMessage('❌ Қате кетті. Қайталап көріңіз.', 'error');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✦ Тіркелу';
+        }
+    });
+
+    // ---- Өшіру кнопкасы ----
+    deleteBtn.addEventListener('click', async () => {
+        if (!docId) {
+            deleteMsg.className = 'msg error';
+            deleteMsg.textContent = 'Қате: құжат ID табылмады.';
+            return;
+        }
+
+        if (!confirm('Өшіру керек пе? Бұл әрекет Firebase-тен және локальді жадыдан деректі жояды.')) {
+            return;
+        }
+
+        // Redirect-ті тоқтатамыз
+        cancelRedirect();
+
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = 'Өшіруде...';
+        deleteMsg.className = 'msg loading';
+        deleteMsg.innerHTML = '<span class="spinner"></span> Өшіру жүруде...';
+
+        try {
+            await db.collection(COLLECTION).doc(docId).delete();
+            localStorage.removeItem('conference_registered');
+            registeredData = null;
+            docId = null;
+
+            alreadyDiv.style.display = 'none';
+            formContainer.style.display = 'block';
+            form.reset();
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = '🗑 Әзірге уақытша өшіру';
+            deleteMsg.className = 'msg';
+            deleteMsg.textContent = '';
+        } catch (err) {
+            console.error('Өшіру қатесі:', err);
+            deleteMsg.className = 'msg error';
+            deleteMsg.textContent = '❌ Өшіру сәтсіз: ' + err.message;
+            deleteBtn.disabled = false;
+            deleteBtn.textContent = '🗑 Әзірге уақытша өшіру';
+        }
+    });
+
+    // ---- Өрістер өзгергенде хабарды жасыру ----
+    [fullName, school, section].forEach(el => el.addEventListener('input', hideMessage));
+</script>
+</body>
+</html>
