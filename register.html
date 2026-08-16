@@ -303,7 +303,8 @@
         statusTitle.textContent = title;
         regInfo.textContent = `Сіз "${name}" ретінде «${sectionName}» секциясына тіркелдіңіз.`;
         const room = getRoomInfo(sectionName);
-        roomDisplay.textContent = `🏫 ${room}`;
+		roomDisplay.textContent = `№ ${room} кабинет`;
+        
         alreadyDiv.style.display = 'block';
         formContainer.style.display = 'none';
         // 4 секундтан кейін redirect
